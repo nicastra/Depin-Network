@@ -293,6 +293,25 @@ const waitForAnyKey = async (message) => {
 const main = async () => {
   displayBanner(); // Tampilkan banner saat aplikasi dimulai
 
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const useProxy = await new Promise((resolve) => {
+    rl.question("Do you want to use proxy? (y/n): ", (answer) => {
+      resolve(answer.toLowerCase() === "y");
+    });
+  });
+
+  if (useProxy) {
+    await waitForAnyKey(
+      "\nNOTE: Using proxy may cause Cloudflare issues.\nIf you encounter errors, consider switching to Direct Mode (no proxy).\n"
+    );
+  }
+
+  rl.close();
+
   const spinner = ora("Reading input files...").start();
   const { tokens, proxies } = await readInputFiles(useProxy);
   spinner.succeed(
